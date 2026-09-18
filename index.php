@@ -1,5 +1,5 @@
 <?php
-    echo "Servidor de Testes"
+    echo "Servidor de Testes";
 
 
 /*
