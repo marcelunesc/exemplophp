@@ -1,5 +1,8 @@
 <?php
+    echo "Servidor de Testes"
 
+
+/*
 // tempo de execução do teste, em segundos
 $tempo = 60;
 
@@ -28,4 +31,5 @@ $duracao = microtime(true) - $inicio;
 
 echo "<h1>Teste de carga concluído</h1>";
 echo "<p>Tempo: " . round($duracao, 2) . " segundos</p>";
+        */
 echo "<p>Iterações: " . number_format($contador) . "</p>";
