@@ -1,4 +1,3 @@
-```php
 <?php
 
 // Configurações do banco
@@ -310,4 +309,3 @@ try {
 </body>
 
 </html>
-```
