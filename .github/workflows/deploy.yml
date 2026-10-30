@@ -1,0 +1,56 @@
+name: Deploy PHP - Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Criar pacote ZIP
+        run: |
+          zip -r -X deploy.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "deploy.zip"
+
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Verificar identidade AWS
+        run: aws sts get-caller-identity
+
+      - name: Enviar pacote para S3
+        run: |
+          aws s3 cp deploy.zip \
+            s3://${{ secrets.EB_S3_BUCKET }}/deploy-${GITHUB_SHA}.zip
+
+      - name: Criar versão no Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name "${{ secrets.EB_APPLICATION_NAME }}" \
+            --version-label "${GITHUB_SHA}" \
+            --source-bundle \
+              S3Bucket="${{ secrets.EB_S3_BUCKET }}",S3Key="deploy-${GITHUB_SHA}.zip" \
+            --process
+
+      - name: Atualizar ambiente
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name "${{ secrets.EB_ENVIRONMENT_NAME }}" \
+            --version-label "${GITHUB_SHA}"
+
+      - name: Aguardar deploy
+        run: |
+          aws elasticbeanstalk wait environment-updated \
+            --environment-name "${{ secrets.EB_ENVIRONMENT_NAME }}"
