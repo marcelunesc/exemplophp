@@ -1,5 +1,5 @@
 <?php
-
+//teste
 include '../../banco.php';
 
 try {
