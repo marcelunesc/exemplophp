@@ -1,6 +1,6 @@
 <?php
 
-// Configurações do banco
+// Configurações  do banco
 $host = 'database-1.clw6mw6uwbt5.us-east-2.rds.amazonaws.com';
 $port = '5432';
 $dbname = 'meubanco';
